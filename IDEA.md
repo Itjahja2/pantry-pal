@@ -30,12 +30,6 @@ what's in the kitchen and a list of recipes to check it against.
 - `recipes` — name, source URL (optional, if added via import)
 - `recipe_ingredients` — links a recipe to the ingredient names it needs
 
-**Technical note:** the URL-import feature needs a call to an LLM (Claude
-API) to turn a recipe page into a structured ingredient list. That's a new
-server-side secret (`ANTHROPIC_API_KEY`) alongside the Supabase one — same
-rule applies: server-only, never in `.env` gets committed, never touches the
-browser.
-
 ## Later
 
 - Quantities and units (e.g. "2 cups flour"), and matching recipes against

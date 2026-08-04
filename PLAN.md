@@ -5,80 +5,65 @@ something you can check yourself in the browser before the next one starts.
 
 ---
 
-## Phase 1 — Pantry tab
+## Phase 1 — Home tab: recipes (manual entry, full CRUD)
 
 **What we build:**
-- Bottom tab bar layout with two tabs: **Home** (placeholder for now) and
-  **Pantry**.
-- Pantry page: lists ingredients, each with an in-stock/out-of-stock toggle.
-- Add a new ingredient by name; remove one you no longer track.
-
-**Schema change:**
-- New migration: `ingredients` table — `id`, `name` (text, not null),
-  `in_stock` (boolean, default true), `created_at`.
-- RLS enabled, no policies (per the standing migration workflow).
-
-**Verify in browser:**
-- Open the Pantry tab, add a few ingredients (e.g. "flour", "eggs"), toggle
-  a couple to out-of-stock, refresh the page — state should persist.
-- Confirm the rows and toggle values look right in Supabase's Table Editor.
-
----
-
-## Phase 2 — Home tab: recipes (manual entry) + "Can I cook this?"
-
-**What we build:**
-- Home page: lists all saved recipes.
+- Home page *is* the recipe list — no separate landing/placeholder page.
 - "Add recipe" form: name + a list of ingredient names, typed in manually.
-- Recipe detail screen (tap a recipe from Home): shows every ingredient the
-  recipe needs, marked have / missing by checking each name against your
-  current Pantry. Presence only — no quantities.
+- Edit an existing recipe from its detail screen.
+- Delete a recipe, with a confirmation step before it's removed.
 
 **Schema change:**
 - New migration: `recipes` table (`id`, `name`, `source_url` nullable,
   `created_at`) and `recipe_ingredients` table (`id`, `recipe_id` references
   `recipes`, `ingredient_name` text) — free-text names so a recipe can list
-  something you don't have yet (that's what "missing" means).
+  something you don't have yet (matters once Pantry exists in Phase 2).
 - RLS enabled on both, no policies.
 
 **Verify in browser:**
-- Add a recipe manually with a mix of ingredients you do and don't have in
-  Pantry. Open its detail view and confirm the have/missing list matches
-  reality. Check both new tables in Supabase's Table Editor.
+- Add a recipe manually, confirm it shows up in the list on Home. Edit it
+  (change the name or an ingredient), then delete it and confirm it's gone
+  from both the list and Supabase's Table Editor.
 
 ---
 
-## Phase 3 — Import a recipe by URL (AI extraction)
+## Phase 2 — Pantry tab
 
 **What we build:**
-- On the "Add recipe" flow, an option to paste a URL instead of typing
-  ingredients by hand. A Server Action fetches the page and calls the Claude
-  API to extract a recipe name + ingredient list, then saves it the same way
-  a manual entry would.
-- If extraction fails (blocked page, no recipe found, etc.), fall back to
-  the manual entry form from Phase 2 — nothing is lost.
+- Tab bar layout with two tabs: **Home** (recipes, from Phase 1) and
+  **Pantry**.
+- Pantry page: lists ingredients.
+- Add a new ingredient by name, with a quantity.
+- Delete an ingredient you no longer track.
 
-**Setup (new, one-time):** get an API key from
-[console.anthropic.com](https://console.anthropic.com), add it to `.env` as
-`ANTHROPIC_API_KEY` — same rules as `SUPABASE_SECRET_KEY`: server-side only,
-never committed, never in a client component.
-
-**Schema change:** none — reuses the Phase 2 tables (`source_url` already
-supports this).
+**Schema change:**
+- New migration: `ingredients` table — `id`, `name` (text, not null),
+  `quantity` (integer, default 0), `created_at`.
+- RLS enabled, no policies (per the standing migration workflow).
 
 **Verify in browser:**
-- Paste a real recipe URL into the import form, confirm a recipe appears on
-  Home with a plausible ingredient list. Try a broken/unsupported URL and
-  confirm it falls back to manual entry cleanly.
+- Open the Pantry tab, add a few ingredients with quantities (e.g. "flour"
+  x2, "eggs" x12), delete one, refresh the page — state should persist.
+- Confirm the rows and quantity values look right in Supabase's Table
+  Editor.
 
 ---
 
-## Later (from IDEA.md — not building today)
+## Phase 3 — Visual design pass
 
-- Quantities and units, and matching recipes against *how much* you have
-- Auto-deduct ingredients from Pantry when a recipe is marked cooked
-- Expiration dates / "use this soon" nudges
-- Auto-generated shopping list for recipes you're a few ingredients short on
-- Multi-user accounts (Auth), so this could be shared with a household
-- Barcode scanning to add ingredients faster
-- Recipe ratings / notes on how it turned out
+**What we build:**
+- Recipe and pantry cards: a consistent layout (image, title, key details),
+  spacing, and hover/interaction states across both pages.
+- Overall page layout: nav/tab bar structure, page margins, and grid for the
+  card lists.
+- A color bar/theme carried through the nav bar and key UI accents.
+- Typography: pick and apply a heading font and a body font site-wide.
+
+**Schema change:** none — this phase is purely visual, no new tables or
+columns.
+
+**Verify in browser:**
+- Confirm recipe and pantry cards look and behave consistently on both
+  pages, the color theme reads consistently across the nav bar and accents,
+  and the chosen fonts are applied everywhere (headings and body text).
+
