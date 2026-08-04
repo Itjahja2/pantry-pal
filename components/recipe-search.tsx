@@ -42,17 +42,15 @@ export function RecipeSearch({ recipes }: { recipes: SearchableRecipe[] }) {
 
   return (
     <>
-      <div className="mx-auto mb-6 flex max-w-md flex-col items-center gap-3">
-        <div className="relative w-full">
-          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search recipes..."
-            className="border-black bg-white pl-9"
-          />
-        </div>
-        <div className="flex gap-2">
+      <div className="relative mx-auto mb-6 w-full max-w-md">
+        <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search recipes..."
+          className="border-black bg-white pl-9"
+        />
+        <div className="absolute left-full top-0 ml-3 flex shrink-0 gap-2">
           <Button
             type="button"
             variant="outline"
@@ -61,8 +59,8 @@ export function RecipeSearch({ recipes }: { recipes: SearchableRecipe[] }) {
               setStatusFilter((current) => (current === "can-cook" ? "all" : "can-cook"))
             }
             className={cn(
-              statusFilter === "can-cook" &&
-                "border-emerald-300 bg-emerald-100 text-emerald-800 hover:bg-emerald-100"
+              "border-emerald-300 bg-emerald-100 text-emerald-800 hover:bg-emerald-200",
+              statusFilter === "can-cook" && "ring-2 ring-emerald-500"
             )}
           >
             Can cook
@@ -75,8 +73,8 @@ export function RecipeSearch({ recipes }: { recipes: SearchableRecipe[] }) {
               setStatusFilter((current) => (current === "cant-cook" ? "all" : "cant-cook"))
             }
             className={cn(
-              statusFilter === "cant-cook" &&
-                "border-red-300 bg-red-100 text-red-800 hover:bg-red-100"
+              "border-red-300 bg-red-100 text-red-800 hover:bg-red-200",
+              statusFilter === "cant-cook" && "ring-2 ring-red-500"
             )}
           >
             Can&apos;t cook
