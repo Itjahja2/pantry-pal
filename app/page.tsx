@@ -40,7 +40,7 @@ export default async function Home() {
 
   return (
     <main className="w-full mx-auto max-w-6xl p-8">
-      <h1 className="font-heading text-2xl font-bold mb-4 text-center">🍽️ Recipes</h1>
+      <h1 className="font-heading text-2xl font-bold mb-4 text-center">📖 Recipes</h1>
       {recipesWithStatus.length ? (
         <RecipeSearch recipes={recipesWithStatus} />
       ) : (

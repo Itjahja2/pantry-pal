@@ -96,7 +96,7 @@ export function AddIngredientDialog() {
         >
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="ingredient-name">Name</Label>
-            <Input id="ingredient-name" {...form.register("name")} />
+            <Input id="ingredient-name" className="border-black" {...form.register("name")} />
             {form.formState.errors.name ? (
               <p className="text-xs text-destructive">
                 {form.formState.errors.name.message}
@@ -110,6 +110,7 @@ export function AddIngredientDialog() {
               type="number"
               min={0}
               step={1}
+              className="border-black"
               {...form.register("quantity")}
             />
             {form.formState.errors.quantity ? (
@@ -123,7 +124,7 @@ export function AddIngredientDialog() {
             <div className="flex items-center gap-2">
               <label
                 htmlFor="ingredient-image"
-                className={cn(buttonVariants({ variant: "outline", size: "sm" }), "cursor-pointer")}
+                className={cn(buttonVariants({ variant: "outline", size: "sm" }), "cursor-pointer border-black")}
               >
                 Choose File
               </label>

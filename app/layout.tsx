@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Manrope } from "next/font/google";
 import { NavBar } from "@/components/nav-bar";
-import { ChatWidget } from "@/components/chat-widget";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -32,10 +31,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <NavBar />
-        <div className="flex flex-1">
-          <ChatWidget />
-          <div className="min-w-0 flex-1">{children}</div>
-        </div>
+        {children}
         <Toaster />
       </body>
     </html>
