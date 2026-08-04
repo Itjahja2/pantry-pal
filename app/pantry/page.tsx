@@ -7,7 +7,10 @@ import { PantrySearch } from "@/components/pantry-search";
 export const dynamic = "force-dynamic";
 
 export default async function Pantry() {
-  const { data: ingredients } = await supabase.from("ingredients").select();
+  const { data: ingredients } = await supabase
+    .from("ingredients")
+    .select()
+    .order("position", { ascending: true });
 
   const ingredientsWithImage = (ingredients ?? []).map((ingredient) => ({
     id: ingredient.id as number,

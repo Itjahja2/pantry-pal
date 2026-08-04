@@ -24,12 +24,21 @@ export async function addRecipe(input: {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid recipe" };
   }
 
+  const { data: last } = await supabase
+    .from("recipes")
+    .select("position")
+    .order("position", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const nextPosition = ((last?.position as number) ?? 0) + 1;
+
   const { data: inserted, error } = await supabase
     .from("recipes")
     .insert({
       Title: parsed.data.title,
       Descriptions: parsed.data.description || "",
       "Recipe Text": parsed.data.recipeText || "",
+      position: nextPosition,
     })
     .select("id")
     .single();
@@ -40,6 +49,30 @@ export async function addRecipe(input: {
 
   revalidatePath("/");
   return { success: true, id: inserted.id as number };
+}
+
+const reorderRecipesSchema = z.object({
+  ids: z.array(z.coerce.number().int()).min(1),
+});
+
+export async function reorderRecipes(input: { ids: number[] }): Promise<ActionResult> {
+  const parsed = reorderRecipesSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: "Invalid request" };
+  }
+
+  const results = await Promise.all(
+    parsed.data.ids.map((id, index) =>
+      supabase.from("recipes").update({ position: index + 1 }).eq("id", id)
+    )
+  );
+  const failed = results.find((result) => result.error);
+  if (failed?.error) {
+    return { success: false, error: failed.error.message };
+  }
+
+  revalidatePath("/");
+  return { success: true };
 }
 
 const updateRecipeSchema = z.object({
@@ -115,11 +148,20 @@ export async function addIngredient(input: {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid ingredient" };
   }
 
+  const { data: last } = await supabase
+    .from("ingredients")
+    .select("position")
+    .order("position", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const nextPosition = ((last?.position as number) ?? 0) + 1;
+
   const { data: inserted, error } = await supabase
     .from("ingredients")
     .insert({
       name: parsed.data.name,
       quantity: parsed.data.quantity,
+      position: nextPosition,
     })
     .select("id")
     .single();
@@ -130,6 +172,30 @@ export async function addIngredient(input: {
 
   revalidatePath("/pantry");
   return { success: true, id: inserted.id as number };
+}
+
+const reorderIngredientsSchema = z.object({
+  ids: z.array(z.coerce.number().int()).min(1),
+});
+
+export async function reorderIngredients(input: { ids: number[] }): Promise<ActionResult> {
+  const parsed = reorderIngredientsSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: "Invalid request" };
+  }
+
+  const results = await Promise.all(
+    parsed.data.ids.map((id, index) =>
+      supabase.from("ingredients").update({ position: index + 1 }).eq("id", id)
+    )
+  );
+  const failed = results.find((result) => result.error);
+  if (failed?.error) {
+    return { success: false, error: failed.error.message };
+  }
+
+  revalidatePath("/pantry");
+  return { success: true };
 }
 
 const updateQuantitySchema = z.object({
@@ -180,6 +246,95 @@ export async function deleteIngredient(input: { id: number }): Promise<ActionRes
 
   revalidatePath("/pantry");
   return { success: true };
+}
+
+export type ChatMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+const GREETING_WORDS = ["hi", "hello", "hey", "yo", "sup", "howdy"];
+
+const COMBO_TEMPLATES: ((items: string[]) => string)[] = [
+  (items) =>
+    `${items.join(" & ")} Skillet — toss everything in a hot pan with a little oil, salt, and pepper until cooked through.`,
+  (items) => `${items.join(" & ")} Stir-Fry — sauté in a hot pan with a splash of soy sauce and garlic.`,
+  (items) => `${items.join(" & ")} Bowl — combine, season to taste, and serve warm.`,
+];
+
+function normalize(text: string) {
+  return text.trim().toLowerCase();
+}
+
+export async function sendChatMessage(
+  history: ChatMessage[]
+): Promise<ActionResult<{ reply: string }>> {
+  const lastUserMessage = [...history].reverse().find((message) => message.role === "user");
+  const text = normalize(lastUserMessage?.content ?? "");
+
+  if (!text) {
+    return {
+      success: true,
+      reply: "Ask me what to cook and I'll check your pantry for something that matches.",
+    };
+  }
+
+  const firstWord = text.split(/\s+/)[0]?.replace(/[!.,?]/g, "");
+  if (GREETING_WORDS.includes(firstWord)) {
+    return {
+      success: true,
+      reply: "Hey there! Ask me for a recipe idea and I'll check what's in your pantry.",
+    };
+  }
+
+  const { data: ingredients } = await supabase.from("ingredients").select("name, quantity");
+  const pantry = ingredients ?? [];
+  const inStockNames = pantry
+    .filter((ingredient) => (ingredient.quantity as number) > 0)
+    .map((ingredient) => ingredient.name as string);
+
+  if (!inStockNames.length) {
+    return {
+      success: true,
+      reply: "Your pantry's empty right now — add some ingredients on the Pantry page and I'll suggest what to cook.",
+    };
+  }
+
+  const { data: recipes } = await supabase
+    .from("recipes")
+    .select()
+    .order("position", { ascending: true });
+
+  const cookableTitles = (recipes ?? [])
+    .map((recipe) => {
+      const recipeText = normalize((recipe["Recipe Text"] as string) ?? "");
+      const mentioned = pantry.filter((ingredient) =>
+        recipeText.includes(normalize(ingredient.name as string))
+      );
+      const canCook = mentioned.length > 0 && mentioned.every((ingredient) => (ingredient.quantity as number) > 0);
+      return { title: recipe.Title as string, canCook };
+    })
+    .filter((recipe) => recipe.canCook)
+    .map((recipe) => recipe.title);
+
+  if (cookableTitles.length) {
+    const shown = cookableTitles.slice(0, 4);
+    const list = shown.map((title) => `• ${title}`).join("\n");
+    const more = cookableTitles.length > shown.length ? "\n…and a few more!" : "";
+    return {
+      success: true,
+      reply: `Based on what's in your pantry, you can make:\n${list}${more}\nCheck the Recipes page for full instructions.`,
+    };
+  }
+
+  const shuffled = [...inStockNames].sort(() => Math.random() - 0.5);
+  const picks = shuffled.slice(0, Math.min(3, shuffled.length));
+  const template = COMBO_TEMPLATES[Math.floor(Math.random() * COMBO_TEMPLATES.length)];
+
+  return {
+    success: true,
+    reply: `You don't have a saved recipe that matches your pantry yet, but here's an idea: ${template(picks)}`,
+  };
 }
 
 const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];

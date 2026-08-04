@@ -16,17 +16,19 @@ export function QuantityStepper({
   id: number;
   initialQuantity: number;
 }) {
-  const [quantity, setQuantity] = useState(initialQuantity);
+  const [inputValue, setInputValue] = useState(String(initialQuantity));
   const [isPending, startTransition] = useTransition();
 
+  const quantity = inputValue.trim() === "" ? 0 : Math.max(0, Math.trunc(Number(inputValue)) || 0);
+
   function commit(next: number) {
-    const clamped = Math.max(0, next);
-    setQuantity(clamped);
+    const clamped = Math.max(0, Math.trunc(next));
+    setInputValue(String(clamped));
     startTransition(async () => {
       const result = await updateIngredientQuantity({ id, quantity: clamped });
       if (!result.success) {
         toast.error(result.error);
-        setQuantity(initialQuantity);
+        setInputValue(String(initialQuantity));
       }
     });
   }
@@ -54,12 +56,9 @@ export function QuantityStepper({
         type="number"
         min={0}
         step={1}
-        value={quantity}
+        value={inputValue}
         disabled={isPending}
-        onChange={(e) => {
-          const next = Number(e.target.value);
-          setQuantity(Number.isNaN(next) ? 0 : Math.max(0, next));
-        }}
+        onChange={(e) => setInputValue(e.target.value)}
         onBlur={() => commit(quantity)}
         className={cn(
           "h-7 w-14 border-none bg-transparent text-center font-medium",

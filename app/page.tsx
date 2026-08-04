@@ -16,29 +16,27 @@ function normalize(name: string) {
 
 export default async function Home() {
   const [{ data: recipes }, { data: ingredients }] = await Promise.all([
-    supabase.from("recipes").select(),
+    supabase.from("recipes").select().order("position", { ascending: true }),
     supabase.from("ingredients").select("name, quantity"),
   ]);
 
   const pantry = ingredients ?? [];
 
-  const recipesWithStatus = (recipes ?? [])
-    .map((recipe) => {
-      const recipeText = normalize(recipe["Recipe Text"] ?? "");
-      const mentioned = pantry.filter((ingredient) =>
-        recipeText.includes(normalize(ingredient.name))
-      );
-      const canCook =
-        mentioned.length > 0 && mentioned.every((ingredient) => ingredient.quantity > 0);
-      return {
-        id: recipe.id as number,
-        title: recipe.Title as string,
-        description: (recipe.Descriptions as string) ?? "",
-        imageUrl: getImagePublicUrl(recipe["Image Path"]),
-        canCook,
-      };
-    })
-    .sort((a, b) => Number(b.canCook) - Number(a.canCook));
+  const recipesWithStatus = (recipes ?? []).map((recipe) => {
+    const recipeText = normalize(recipe["Recipe Text"] ?? "");
+    const mentioned = pantry.filter((ingredient) =>
+      recipeText.includes(normalize(ingredient.name))
+    );
+    const canCook =
+      mentioned.length > 0 && mentioned.every((ingredient) => ingredient.quantity > 0);
+    return {
+      id: recipe.id as number,
+      title: recipe.Title as string,
+      description: (recipe.Descriptions as string) ?? "",
+      imageUrl: getImagePublicUrl(recipe["Image Path"]),
+      canCook,
+    };
+  });
 
   return (
     <main className="w-full mx-auto max-w-6xl p-8">
