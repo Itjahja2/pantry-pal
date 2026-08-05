@@ -37,10 +37,12 @@ otherwise **Can't cook**. Presence-and-quantity only, no unit math.
 
 - Import a recipe by pasting a URL — an AI call fetches the page and
   extracts the ingredient list automatically, instead of typing it in
-- Smarter matching: recipes that need *more* of an ingredient than you
-  currently have, not just presence
-- Auto-deduct ingredients from Pantry when you mark a recipe as cooked
-- Expiration dates / "use this soon" nudges
 - Auto-generated shopping list for recipes you're a few ingredients short on
 - Barcode scanning to add ingredients faster
-- Recipe ratings / notes on how it turned out
+- Multiple pages for Recipes and Pantry, instead of one long scrolling list
+  of everything
+- Sections within Pantry (e.g. "Fridge," "Spice Rack") so ingredients can be
+  grouped by where they actually live, not just one flat list
+- A missing-ingredients notification right on the recipe edit page — flag
+  which listed ingredients aren't covered by your Pantry as you type, instead
+  of only finding out from the Can cook / Can't cook badge back on the list
