@@ -30,6 +30,7 @@ export default async function RecipeDetail({
           id: recipe.id,
           title: recipe.Title,
           description: recipe.Descriptions,
+          ingredients: recipe.Ingredients,
           recipeText: recipe["Recipe Text"],
           imageUrl: getImagePublicUrl(recipe["Image Path"]),
         }}

@@ -11,12 +11,14 @@ type ActionResult<T extends object = object> =
 const recipeSchema = z.object({
   title: z.string().trim().min(1, "Title is required"),
   description: z.string().trim().optional(),
+  ingredients: z.string().trim().optional(),
   recipeText: z.string().trim().optional(),
 });
 
 export async function addRecipe(input: {
   title: string;
   description?: string;
+  ingredients?: string;
   recipeText?: string;
 }): Promise<ActionResult<{ id: number }>> {
   const parsed = recipeSchema.safeParse(input);
@@ -37,6 +39,7 @@ export async function addRecipe(input: {
     .insert({
       Title: parsed.data.title,
       Descriptions: parsed.data.description || "",
+      Ingredients: parsed.data.ingredients || "",
       "Recipe Text": parsed.data.recipeText || "",
       position: nextPosition,
     })
@@ -79,6 +82,7 @@ const updateRecipeSchema = z.object({
   id: z.coerce.number().int(),
   title: z.string().trim().min(1, "Title is required"),
   description: z.string().trim().optional(),
+  ingredients: z.string().trim().optional(),
   recipeText: z.string().trim().optional(),
 });
 
@@ -86,6 +90,7 @@ export async function updateRecipe(input: {
   id: number;
   title: string;
   description?: string;
+  ingredients?: string;
   recipeText?: string;
 }): Promise<ActionResult> {
   const parsed = updateRecipeSchema.safeParse(input);
@@ -98,6 +103,7 @@ export async function updateRecipe(input: {
     .update({
       Title: parsed.data.title,
       Descriptions: parsed.data.description || "",
+      Ingredients: parsed.data.ingredients || "",
       "Recipe Text": parsed.data.recipeText || "",
     })
     .eq("id", parsed.data.id);

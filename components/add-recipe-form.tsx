@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 const formSchema = z.object({
   title: z.string().trim().min(1, "Title is required"),
   description: z.string().trim().optional(),
+  ingredients: z.string().trim().optional(),
   recipeText: z.string().trim().optional(),
 });
 
@@ -34,6 +35,7 @@ export type ExistingRecipe = {
   id: number;
   title: string;
   description?: string;
+  ingredients?: string;
   recipeText?: string;
   imageUrl?: string | null;
 };
@@ -51,6 +53,7 @@ export function AddRecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
     defaultValues: {
       title: recipe?.title ?? "",
       description: recipe?.description ?? "",
+      ingredients: recipe?.ingredients ?? "",
       recipeText: recipe?.recipeText ?? "",
     },
   });
@@ -177,12 +180,22 @@ export function AddRecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
           <Textarea id="recipe-description" className="bg-white border-black" {...form.register("description")} />
         </div>
         <div className="flex flex-col gap-1.5">
+          <Label htmlFor="recipe-ingredients" className="font-bold">Ingredients</Label>
+          <Textarea
+            id="recipe-ingredients"
+            rows={6}
+            className="bg-white border-black"
+            placeholder="One ingredient per line..."
+            {...form.register("ingredients")}
+          />
+        </div>
+        <div className="flex flex-col gap-1.5">
           <Label htmlFor="recipe-text" className="font-bold">Recipe</Label>
           <Textarea
             id="recipe-text"
             rows={10}
             className="bg-white border-black"
-            placeholder="Ingredients and steps..."
+            placeholder="Steps..."
             {...form.register("recipeText")}
           />
           <p className="text-xs text-muted-foreground">
