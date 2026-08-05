@@ -2,7 +2,7 @@
 
 import { useState, type ChangeEvent } from "react";
 import Image from "next/image";
-import { ImagePlusIcon } from "lucide-react";
+import { ImagePlusIcon, LeafIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { uploadIngredientImage } from "@/app/actions";
@@ -42,7 +42,7 @@ export function PantryImageThumbnail({
   }
 
   return (
-    <label className="group/image relative size-12 shrink-0 cursor-pointer overflow-hidden rounded-lg border border-black bg-white">
+    <label className="group/image relative size-12 shrink-0 cursor-pointer overflow-hidden rounded-lg bg-white shadow-md">
       <input
         type="file"
         accept="image/png,image/jpeg,image/webp"
@@ -59,7 +59,11 @@ export function PantryImageThumbnail({
           className="object-cover"
           unoptimized={imageUrl.startsWith("blob:")}
         />
-      ) : null}
+      ) : (
+        <div className="flex size-full items-center justify-center bg-emerald-50">
+          <LeafIcon className="size-5 text-emerald-800/60" />
+        </div>
+      )}
       <span className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover/image:opacity-100">
         <ImagePlusIcon className="size-4 text-white" />
       </span>

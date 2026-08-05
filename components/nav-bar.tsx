@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { LeafIcon } from "lucide-react";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -15,8 +16,12 @@ export function NavBar() {
   return (
     <nav className="border-b border-black/10 bg-[#C96A3D]">
       <div className="grid grid-cols-[1fr_auto_1fr] items-center px-8 pt-4">
-        <Link href="/" className="font-heading text-2xl font-semibold text-white justify-self-start">
+        <Link
+          href="/"
+          className="flex items-center gap-1.5 font-heading text-2xl font-semibold text-white justify-self-start"
+        >
           Pantry Pal
+          <LeafIcon className="size-5 -rotate-12" />
         </Link>
         <div className="flex justify-self-center gap-1">
           {TABS.map((tab) => {

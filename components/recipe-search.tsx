@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { SearchIcon } from "lucide-react";
+import { CircleCheckIcon, CircleXIcon, LeafIcon, SearchIcon, UtensilsIcon } from "lucide-react";
 import { toast } from "sonner";
 import {
   DndContext,
@@ -64,7 +64,7 @@ function SortableRecipeCard({
     >
       <Card
         className={cn(
-          "group/card relative flex flex-col gap-0 p-3 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md",
+          "group/card relative flex flex-col gap-0 p-3 ring-0 shadow-md transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg",
           reorderable && "cursor-grab touch-none active:cursor-grabbing",
           isDragging && "opacity-50 shadow-lg"
         )}
@@ -83,7 +83,15 @@ function SortableRecipeCard({
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className="object-cover"
             />
-          ) : null}
+          ) : (
+            <div className="relative flex size-full items-center justify-center bg-emerald-50">
+              <LeafIcon className="absolute left-3 top-3 size-5 -rotate-12 text-emerald-800/10" />
+              <LeafIcon className="absolute bottom-3 right-3 size-5 rotate-[160deg] text-emerald-800/10" />
+              <div className="flex size-16 items-center justify-center rounded-full bg-emerald-100/80">
+                <UtensilsIcon className="size-7 text-emerald-800/60" />
+              </div>
+            </div>
+          )}
           <CookStatusBadge canCook={recipe.canCook} className="absolute left-2 top-2" />
         </div>
         <div className="pt-2">
@@ -151,7 +159,7 @@ export function RecipeSearch({ recipes }: { recipes: SearchableRecipe[] }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search recipes..."
-          className="border-black bg-white pl-9"
+          className="border-0 bg-white pl-9 shadow-md"
         />
         <div className="absolute left-full top-0 ml-3 flex shrink-0 gap-2">
           <Button
@@ -162,10 +170,11 @@ export function RecipeSearch({ recipes }: { recipes: SearchableRecipe[] }) {
               setStatusFilter((current) => (current === "can-cook" ? "all" : "can-cook"))
             }
             className={cn(
-              "border-emerald-300 bg-emerald-100 text-emerald-800 hover:bg-emerald-200",
+              "border-0 bg-emerald-100 text-emerald-800 shadow-md hover:bg-emerald-200",
               statusFilter === "can-cook" && "ring-2 ring-emerald-500"
             )}
           >
+            <CircleCheckIcon className="size-4" />
             Can cook
           </Button>
           <Button
@@ -176,10 +185,11 @@ export function RecipeSearch({ recipes }: { recipes: SearchableRecipe[] }) {
               setStatusFilter((current) => (current === "cant-cook" ? "all" : "cant-cook"))
             }
             className={cn(
-              "border-red-300 bg-red-100 text-red-800 hover:bg-red-200",
+              "border-0 bg-red-100 text-red-800 shadow-md hover:bg-red-200",
               statusFilter === "cant-cook" && "ring-2 ring-red-500"
             )}
           >
+            <CircleXIcon className="size-4" />
             Can&apos;t cook
           </Button>
         </div>

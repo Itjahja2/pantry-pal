@@ -74,7 +74,7 @@ export function AddIngredientDialog() {
       <DialogTrigger
         render={
           <Button
-            className="fixed bottom-6 right-6 z-40 h-12 gap-2 rounded-full px-5 text-base shadow-lg"
+            className="fixed bottom-6 right-6 z-40 h-12 gap-2 rounded-full bg-emerald-800 px-5 text-base text-white shadow-lg hover:bg-emerald-900"
             aria-label="Add ingredient"
           />
         }

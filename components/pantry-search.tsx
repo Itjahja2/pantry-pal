@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { SearchIcon } from "lucide-react";
+import { CircleCheckIcon, CircleXIcon, SearchIcon } from "lucide-react";
 import { toast } from "sonner";
 import {
   DndContext,
@@ -63,7 +63,7 @@ function SortableIngredientCard({
     >
       <Card
         className={cn(
-          "group/card w-full flex-row items-center justify-between gap-4 px-4 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-muted hover:shadow-md",
+          "group/card w-full flex-row items-center justify-between gap-4 px-4 ring-0 shadow-md transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-muted hover:shadow-lg",
           reorderable && "cursor-grab touch-none active:cursor-grabbing",
           isDragging && "opacity-50 shadow-lg"
         )}
@@ -139,7 +139,7 @@ export function PantrySearch({ ingredients }: { ingredients: SearchableIngredien
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search ingredients..."
-          className="border-black bg-white pl-9"
+          className="border-0 bg-white pl-9 shadow-md"
         />
         <div className="absolute left-full top-0 ml-3 flex shrink-0 gap-2">
           <Button
@@ -150,10 +150,11 @@ export function PantrySearch({ ingredients }: { ingredients: SearchableIngredien
               setStockFilter((current) => (current === "in-stock" ? "all" : "in-stock"))
             }
             className={cn(
-              "border-emerald-300 bg-emerald-100 text-emerald-800 hover:bg-emerald-200",
+              "border-0 bg-emerald-100 text-emerald-800 shadow-md hover:bg-emerald-200",
               stockFilter === "in-stock" && "ring-2 ring-emerald-500"
             )}
           >
+            <CircleCheckIcon className="size-4" />
             In Stock
           </Button>
           <Button
@@ -164,10 +165,11 @@ export function PantrySearch({ ingredients }: { ingredients: SearchableIngredien
               setStockFilter((current) => (current === "out-of-stock" ? "all" : "out-of-stock"))
             }
             className={cn(
-              "border-red-300 bg-red-100 text-red-800 hover:bg-red-200",
+              "border-0 bg-red-100 text-red-800 shadow-md hover:bg-red-200",
               stockFilter === "out-of-stock" && "ring-2 ring-red-500"
             )}
           >
+            <CircleXIcon className="size-4" />
             Out of Stock
           </Button>
         </div>

@@ -21,7 +21,10 @@ export default async function Pantry() {
 
   return (
     <main className="w-full mx-auto max-w-4xl p-8">
-      <h1 className="font-heading text-2xl font-bold mb-4 text-center">🥬 Pantry</h1>
+      <h1 className="font-heading text-2xl font-bold mb-1 text-center">🥬 Pantry</h1>
+      <p className="mb-4 text-center text-muted-foreground">
+        Keep track of what you have on hand.
+      </p>
       {ingredientsWithImage.length ? (
         <PantrySearch ingredients={ingredientsWithImage} />
       ) : (

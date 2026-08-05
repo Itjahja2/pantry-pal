@@ -40,7 +40,10 @@ export default async function Home() {
 
   return (
     <main className="w-full mx-auto max-w-6xl p-8">
-      <h1 className="font-heading text-2xl font-bold mb-4 text-center">📖 Recipes</h1>
+      <h1 className="font-heading text-2xl font-bold mb-1 text-center">📖 Recipes</h1>
+      <p className="mb-4 text-center text-muted-foreground">
+        Discover recipes you can make with what&apos;s in your pantry.
+      </p>
       {recipesWithStatus.length ? (
         <RecipeSearch recipes={recipesWithStatus} />
       ) : (
@@ -49,7 +52,7 @@ export default async function Home() {
       <Button
         render={<Link href="/recipes/new" aria-label="Add recipe" />}
         nativeButton={false}
-        className="fixed bottom-6 right-6 z-40 h-12 gap-2 rounded-full px-5 text-base shadow-lg"
+        className="fixed bottom-6 right-6 z-40 h-12 gap-2 rounded-full bg-emerald-800 px-5 text-base text-white shadow-lg hover:bg-emerald-900"
       >
         <PlusIcon className="size-5" />
         Add Recipe
