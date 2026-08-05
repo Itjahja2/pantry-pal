@@ -188,6 +188,9 @@ export function AddRecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
             placeholder="One ingredient per line..."
             {...form.register("ingredients")}
           />
+          <p className="text-xs text-muted-foreground">
+            We check this text against your Pantry to tell whether you can cook it.
+          </p>
         </div>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="recipe-text" className="font-bold">Recipe</Label>
@@ -198,9 +201,6 @@ export function AddRecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
             placeholder="Steps..."
             {...form.register("recipeText")}
           />
-          <p className="text-xs text-muted-foreground">
-            We check this text against your Pantry to tell whether you can cook it.
-          </p>
         </div>
         <div className={cn("flex gap-2 pt-2", isEditing ? "justify-between" : "justify-end")}>
           {isEditing ? (

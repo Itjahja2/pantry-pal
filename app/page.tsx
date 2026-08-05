@@ -23,9 +23,9 @@ export default async function Home() {
   const pantry = ingredients ?? [];
 
   const recipesWithStatus = (recipes ?? []).map((recipe) => {
-    const recipeText = normalize(recipe["Recipe Text"] ?? "");
+    const ingredientsText = normalize(recipe["Ingredients"] ?? "");
     const mentioned = pantry.filter((ingredient) =>
-      recipeText.includes(normalize(ingredient.name))
+      ingredientsText.includes(normalize(ingredient.name))
     );
     const canCook =
       mentioned.length > 0 && mentioned.every((ingredient) => ingredient.quantity > 0);
